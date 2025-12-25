@@ -1,0 +1,20 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Resources:
+  GitHubOIDCProvider:
+    Type: AWS::IAM::OIDCProvider
+    Properties:
+      # GitHubのトークン発行元URL
+      Url: https://token.actions.githubusercontent.com
+      # AWS STS向けのトークンを許可
+      ClientIdList:
+        - sts.amazonaws.com
+      # ルート証明書のハッシュ値
+      # ThumbprintList:
+      #   - 6938fd4d98bab03faadb97b34396831e3780aea1
+
+Outputs:
+  OIDCProviderArn:
+    Value: !GetAtt GitHubOIDCProvider.Arn
+    Export:
+      Name: GitHubOIDCProviderArn
