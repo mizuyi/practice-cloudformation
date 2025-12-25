@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Parameters:
+  # ユーザ名を指定
+  GitHubOwner:
+    Type: String
+    Description: GitHub User Name or Organization Name
+  # リポジトリ名を指定
+  GitHubRepo:
+    Type: String
+    Description: GitHub Repository Name
+  # role arnをカンマ区切りで指定
+  ManagedPolicyArns:
+    Type: CommaDelimitedList
+    Description: |
+      AWS Managed Policy ARNs
+      Example: arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess,arn:aws:iam::aws:policy/AWSLambda_FullAccess
+
+Resources:
+  GitHubActionsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      # roleを引き受けるリソースの設定
+      AssumeRolePolicyDocument:
+        # ポリシーのバージョン: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_version.html
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            # roleを引き受ける主体
+            Principal:
+              Federated: !ImportValue GitHubOIDCProviderArn
+            # 主体が実行できるアクション
+            # OIDCプロバイダを経由でロールの一時認証を取得
+            Action: sts:AssumeRoleWithWebIdentity
+            # roleを引き受けるための条件
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: sts.amazonaws.com
+              StringLike:
+                token.actions.githubusercontent.com:sub: !Sub "repo:${GitHubOwner}/${GitHubRepo}:*"
+      # roleにアタッチするpolicy
+      ManagedPolicyArns: !Ref ManagedPolicyArns
+
+Outputs:
+  RoleArn:
+    Value: !GetAtt GitHubActionsRole.Arn
