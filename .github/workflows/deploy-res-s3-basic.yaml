@@ -23,7 +23,7 @@ jobs:
           role-to-assume: ${{ secrets.AWS_OIDC_ROLE_ARN }}
 
       - name: Deploy CFn S3 Basic
-        uses: aws-actions/aws-cloudformation-github-deploy@1
+        uses: aws-actions/aws-cloudformation-github-deploy@v1
         with:
           name: cloudformation-stack-s3-bucket-basic-${{ secrets.AWS_RESOURCE_NAME_SUFFIX }}
           template: ${{ env.CFN_TEMPLATE }}
