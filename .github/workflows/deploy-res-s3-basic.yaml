@@ -1,0 +1,31 @@
+name: "Resources: Deploy CFn S3 Basic"
+
+on:
+  workflow_dispatch:
+
+env:
+  AWS_REGION: ap-northeast-1
+  CFN_TEMPLATE: ./resources/s3/basic.yaml
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@5.1.1
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_OIDC_ROLE_ARN }}
+
+      - name: Deploy CFn S3 Basic
+        uses: aws-actions/aws-cloudformation-github-deploy@1
+        with:
+          name: cloudformation-stack-s3-bucket-basic-${{ secrets.AWS_RESOURCE_NAME_SUFFIX }}
+          template: ${{ env.CFN_TEMPLATE }}
+          parameter-overrides: ResourceNameSuffix=${{ secrets.AWS_RESOURCE_NAME_SUFFIX }}
+          no-fail-on-empty-changeset: "1"
