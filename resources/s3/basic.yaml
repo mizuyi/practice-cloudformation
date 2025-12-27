@@ -8,6 +8,6 @@ Parameters:
 Resources:
   S3Bucket:
     Type: AWS::S3::Bucket
+    DeletionPolicy: Delete
     Properties:
       BucketName: !Sub "s3-bucket-basic-${ResourceNameSuffix}"
-      DeletionPolicy: Delete
