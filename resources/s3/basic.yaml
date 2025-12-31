@@ -9,5 +9,6 @@ Resources:
   S3Bucket:
     Type: AWS::S3::Bucket
     DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
     Properties:
       BucketName: !Sub "s3-bucket-basic-${ResourceNameSuffix}"
