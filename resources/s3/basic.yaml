@@ -12,3 +12,9 @@ Resources:
     UpdateReplacePolicy: Delete
     Properties:
       BucketName: !Sub "s3-bucket-basic-${ResourceNameSuffix}"
+      # パブリックアクセスの設定
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true # PublicAclの新規作成を禁止
+        IgnorePublicAcls: true # PublicAclの設定を無視
+        BlockPublicPolicy: true # パブリックアクセスが可能なPolicyの新規適用を禁止
+        RestrictPublicBuckets: true # パブリックアクセスに関するPolicyを無効化
